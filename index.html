@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>JC Advisory — Daily Health Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --petrol-light: #C8DFE6;
+  --petrol-mid: #8BBFC9;
+  --petrol-deep: #2B6475;
+  --petrol-dark: #1C2B2F;
+  --petrol-darker: #141F22;
+  --blush: #F4C5C5;
+  --blush-deep: #9B3535;
+  --straw: #F5E6C0;
+  --straw-deep: #7C5B15;
+  --sage: #C9E8D5;
+  --sage-deep: #286B46;
+  --ink-light: #6B8C96;
+  --card: rgba(43,100,117,0.18);
+  --card-border: rgba(139,191,201,0.15);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--petrol-darker);
+  color: var(--petrol-light);
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+/* ── HEADER ── */
+.app-header {
+  background: rgba(20,31,34,0.97);
+  backdrop-filter: blur(16px);
+  border-bottom: 0.5px solid var(--card-border);
+  padding: 14px 20px 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-text { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 500; color: var(--petrol-light); }
+.logo-sub { font-family: 'Inter', sans-serif; font-size: 9px; font-weight: 300; color: var(--petrol-mid); letter-spacing: 0.08em; }
+.header-date { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--petrol-mid); letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* ── TABS ── */
+.tabs {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: rgba(20,31,34,0.97);
+  backdrop-filter: blur(20px);
+  border-top: 0.5px solid var(--card-border);
+  display: flex;
+  z-index: 100;
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-light);
+  transition: color 0.2s;
+  gap: 3px;
+}
+.tab-btn.active { color: var(--petrol-light); }
+.tab-btn svg { width: 20px; height: 20px; }
+.tab-label { font-family: 'Inter', sans-serif; font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── SCROLL PAGE (Home) ── */
+.home-page { padding: 0; }
+
+/* ── COACH SECTION ── */
+.coach-section {
+  padding: 16px 20px;
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--petrol-mid);
+  margin-bottom: 10px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 12px;
+  scrollbar-width: none;
+  min-height: 200px;
+  max-height: 45vh;
+}
+.chat-messages::-webkit-scrollbar { display: none; }
+
+.msg { margin-bottom: 12px; animation: fadeUp 0.22s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px);} to { opacity:1; transform:none;} }
+
+.msg-bubble {
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.65;
+  max-width: 88%;
+}
+
+.msg.user { display: flex; justify-content: flex-end; }
+.msg.user .msg-bubble {
+  background: var(--petrol-deep);
+  color: var(--petrol-light);
+  border-radius: var(--radius) var(--radius) 4px var(--radius);
+}
+.msg.coach .msg-bubble {
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  color: var(--petrol-light);
+  border-radius: 4px var(--radius) var(--radius) var(--radius);
+}
+
+.coach-typing {
+  display: flex; align-items: center; gap: 5px;
+  padding: 10px 14px;
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: 4px var(--radius) var(--radius) var(--radius);
+  width: fit-content;
+}
+.typing-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--petrol-mid);
+  animation: typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform:translateY(0); opacity:0.5; }
+  30% { transform:translateY(-4px); opacity:1; }
+}
+
+.quick-asks {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+}
+.quick-asks::-webkit-scrollbar { display: none; }
+
+.quick-ask {
+  padding: 7px 12px;
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--petrol-mid);
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.quick-ask:hover { border-color: var(--petrol-mid); color: var(--petrol-light); }
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 0.5px solid var(--card-border);
+}
+
+.chat-input {
+  flex: 1;
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--petrol-light);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  outline: none;
+  resize: none;
+  height: 42px;
+  transition: border-color 0.2s;
+}
+.chat-input:focus { border-color: var(--petrol-mid); }
+.chat-input::placeholder { color: var(--ink-light); }
+
+.chat-send {
+  width: 42px; height: 42px;
+  background: var(--petrol-deep);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s; flex-shrink: 0;
+}
+.chat-send:hover { background: #3a7d8f; }
+.chat-send svg { width: 16px; height: 16px; fill: var(--petrol-light); }
+
+/* ── SECTION DIVIDER ── */
+.scroll-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 20px;
+  cursor: pointer;
+}
+.divider-line { flex: 1; height: 0.5px; background: var(--card-border); }
+.divider-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  white-space: nowrap;
+}
+.divider-arrow { color: var(--ink-light); font-size: 12px; }
+
+/* ── QUICK LOG SECTION ── */
+.quick-log-section { padding: 4px 20px 20px; }
+
+.section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--petrol-light);
+  margin-bottom: 14px;
+}
+
+.log-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* Drink type selector */
+.drink-types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.drink-type-btn {
+  padding: 9px 4px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--card-border);
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: var(--petrol-mid);
+  text-align: center;
+  transition: all 0.18s;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.drink-type-btn .emoji { font-size: 16px; }
+.drink-type-btn.selected { border-color: var(--blush-deep); background: rgba(244,197,197,0.1); color: var(--blush); }
+
+.btn-log-drink {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  color: var(--blush);
+  border: 1.5px solid var(--blush-deep);
+  border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 10px;
+}
+.btn-log-drink:hover { background: rgba(244,197,197,0.1); }
+.btn-log-drink:active { transform: scale(0.98); }
+
+.btn-log-pill {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  color: var(--straw);
+  border: 1.5px solid var(--straw-deep);
+  border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-log-pill:hover { background: rgba(245,230,192,0.1); }
+.btn-log-pill:active { transform: scale(0.98); }
+
+/* Today stats strip */
+.today-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.today-stat {
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.today-stat-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--petrol-light);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.today-stat-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+}
+
+/* limit bar */
+.limit-bar-wrap { margin-bottom: 10px; }
+.limit-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: var(--petrol-mid);
+  margin-bottom: 5px;
+}
+.limit-bar-bg {
+  background: rgba(43,100,117,0.2);
+  border-radius: 3px; height: 5px; overflow: hidden;
+}
+.limit-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease, background 0.3s; }
+
+/* ── DAILY VIEW SECTION ── */
+.daily-view-section { padding: 4px 20px 20px; }
+
+.verse-card {
+  background: rgba(43,100,117,0.1);
+  border-left: 2px solid var(--petrol-deep);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 13px 15px;
+  margin-bottom: 14px;
+}
+.verse-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--petrol-light);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 5px;
+}
+.verse-ref {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  color: var(--petrol-mid);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* checkin */
+.card {
+  background: var(--card);
+  border: 0.5px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--petrol-mid);
+  margin-bottom: 12px;
+}
+
+.checkin-block {
+  border-radius: var(--radius-sm);
+  padding: 13px;
+  margin-bottom: 8px;
+  border: 0.5px solid var(--card-border);
+  background: rgba(43,100,117,0.08);
+  transition: all 0.2s;
+}
+.checkin-block.completed { background: rgba(40,107,70,0.12); border-color: rgba(40,107,70,0.35); }
+
+.checkin-time {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--petrol-mid);
+  margin-bottom: 5px;
+  display: flex; align-items: center; gap: 5px;
+}
+.checkin-time .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--petrol-mid); }
+.checkin-block.completed .checkin-time { color: var(--sage-deep); }
+.checkin-block.completed .checkin-time .dot { background: var(--sage-deep); }
+
+.checkin-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--petrol-light);
+  margin-bottom: 10px;
+}
+
+.vol-scale { display: flex; gap: 8px; margin: 10px 0; }
+.vol-btn {
+  flex: 1; aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--card-border);
+  background: transparent;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--petrol-mid);
+  transition: all 0.18s;
+  display: flex; align-items: center; justify-content: center;
+}
+.vol-btn:hover { border-color: var(--petrol-mid); color: var(--petrol-light); }
+.vol-btn.selected-1 { background: var(--sage); border-color: var(--sage-deep); color: var(--sage-deep); }
+.vol-btn.selected-2 { background: rgba(197,232,213,0.4); border-color: #5aab7a; color: #5aab7a; }
+.vol-btn.selected-3 { background: rgba(245,230,192,0.25); border-color: var(--straw-deep); color: var(--straw-deep); }
+.vol-btn.selected-4 { background: rgba(244,197,197,0.25); border-color: #c97a7a; color: #c97a7a; }
+.vol-btn.selected-5 { background: var(--blush); border-color: var(--blush-deep); color: var(--blush-deep); }
+
+.vol-labels {
+  display: flex; justify-content: space-between;
+  font-size: 9px; color: var(--ink-light); letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: var(--petrol-deep);
+  color: var(--petrol-light);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.18s;
+  margin-top: 10px;
+}
+.btn-primary:hover { background: #3a7d8f; }
+.btn-primary:active { transform: scale(0.98); }
+
+/* Phase */
+.phase-card {
+  background: linear-gradient(135deg, rgba(43,100,117,0.28) 0%, rgba(20,31,34,0.5) 100%);
+  border: 0.5px solid var(--petrol-deep);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 12px;
+}
+.phase-number {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--petrol-mid);
+  margin-bottom: 5px;
+}
+.phase-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--petrol-light);
+  margin-bottom: 7px;
+}
+.phase-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: var(--petrol-mid);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.phase-progress { background: rgba(43,100,117,0.2); border-radius: 3px; height: 4px; overflow: hidden; }
+.phase-bar { height: 100%; background: var(--petrol-mid); border-radius: 3px; transition: width 0.6s ease; }
+.phase-meta { display: flex; justify-content: space-between; font-family:'Inter'; font-size:10px; color:var(--petrol-mid); margin-bottom:7px; }
+
+/* Scorecard */
+.score-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 0.5px solid var(--card-border);
+  font-family: 'Inter', sans-serif; font-size: 12px;
+}
+.score-row:last-child { border-bottom: none; }
+.score-label { color: var(--petrol-light); }
+.score-meta { font-size: 10px; color: var(--petrol-mid); margin-top: 1px; }
+.traffic-light { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.tl-green { background: var(--sage-deep); box-shadow: 0 0 6px rgba(40,107,70,0.6); }
+.tl-amber { background: #d4881a; box-shadow: 0 0 6px rgba(212,136,26,0.6); }
+.tl-red { background: var(--blush-deep); box-shadow: 0 0 6px rgba(155,53,53,0.6); }
+.tl-grey { background: var(--ink-light); }
+
+/* Bar chart */
+.bar-chart {
+  display: flex; align-items: flex-end; gap: 5px;
+  height: 72px; margin: 12px 0 6px;
+}
+.bar-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; height: 100%; justify-content: flex-end; gap: 3px;
+}
+.bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 3px; transition: height 0.4s ease; }
+.bar-day { font-family:'Inter'; font-size:9px; color:var(--ink-light); }
+.bar-val { font-family:'Outfit'; font-size:9px; color:var(--petrol-mid); }
+
+/* Weight */
+.trajectory-svg { width: 100%; height: 80px; margin-top: 10px; }
+.weight-input-row { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+.num-input {
+  background: rgba(43,100,117,0.2);
+  border: 0.5px solid var(--card-border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  color: var(--petrol-light);
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  outline: none; width: 120px;
+  transition: border-color 0.2s;
+}
+.num-input:focus { border-color: var(--petrol-mid); }
+.btn-sm {
+  padding: 9px 14px;
+  background: var(--petrol-deep);
+  color: var(--petrol-light);
+  border: none; border-radius: var(--radius-sm);
+  font-family: 'Outfit', sans-serif; font-size: 13px;
+  cursor: pointer; transition: all 0.18s;
+}
+.btn-sm:hover { background: #3a7d8f; }
+
+/* Non-home screens */
+.screen-pad { padding: 20px; }
+
+/* Alert */
+.alert-box { padding: 10px 13px; border-radius: var(--radius-sm); font-family:'Inter'; font-size:11px; line-height:1.6; margin-top:10px; }
+.alert-amber { background: rgba(212,136,26,0.12); border: 0.5px solid rgba(212,136,26,0.4); color: #d4881a; }
+.alert-red { background: rgba(155,53,53,0.15); border: 0.5px solid rgba(155,53,53,0.5); color: var(--blush); }
+.alert-green { background: rgba(40,107,70,0.15); border: 0.5px solid rgba(40,107,70,0.4); color: var(--sage); }
+
+/* Log list */
+.log-list { margin-top: 10px; }
+.log-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 0.5px solid var(--card-border);
+  font-family:'Inter'; font-size:12px;
+}
+.log-item:last-child { border-bottom: none; }
+.log-time { color: var(--petrol-mid); font-size: 11px; }
+
+/* Streak */
+.streak-row { display: flex; gap: 6px; margin-top: 12px; }
+.streak-day {
+  flex: 1; aspect-ratio: 1; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-family:'Inter'; font-size:8px; letter-spacing:0.04em;
+  color: var(--ink-light); border: 0.5px solid var(--card-border);
+  flex-direction: column; gap: 2px;
+}
+.streak-day.free { background: rgba(40,107,70,0.2); border-color: rgba(40,107,70,0.45); color: var(--sage-deep); }
+.streak-day.drink { background: rgba(155,53,53,0.18); border-color: rgba(155,53,53,0.4); color: var(--blush-deep); }
+.streak-day.today { border-color: var(--petrol-mid); color: var(--petrol-mid); }
+
+/* Toast */
+.toast {
+  position: fixed; top: 72px;
+  left: 50%; transform: translateX(-50%) translateY(-8px);
+  background: var(--petrol-deep);
+  color: var(--petrol-light);
+  padding: 9px 16px; border-radius: 20px;
+  font-family:'Inter'; font-size:12px;
+  z-index: 200; opacity: 0; transition: all 0.28s;
+  border: 0.5px solid var(--card-border); white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Stat inline row */
+.stat-row { display: flex; align-items: baseline; gap: 5px; }
+.stat-big { font-family:'Outfit'; font-size:36px; font-weight:300; color:var(--petrol-light); line-height:1; }
+.stat-unit { font-family:'Inter'; font-size:12px; color:var(--petrol-mid); }
+.stat-sub { font-family:'Inter'; font-size:11px; color:var(--ink-light); }
+
+.divider-line-h { height: 0.5px; background: var(--card-border); margin: 14px 0; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="logo">
+    <svg width="26" height="26" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="13" width="44" height="18" rx="3" fill="#2B6475"/>
+      <rect x="13" y="0" width="18" height="44" rx="3" fill="#2B6475"/>
+      <polyline points="3,22 10,22 13,12 17,32 20,18 24,26 28,22 41,22" fill="none" stroke="#C8DFE6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <div class="logo-text">JC Advisory</div>
+      <div class="logo-sub">Health Coach</div>
+    </div>
+  </div>
+  <div class="header-date" id="headerDate"></div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN: HOME (scrollable)
+════════════════════════════════════ -->
+<div class="screen active" id="screen-home">
+
+  <!-- 1. COACH -->
+  <div class="coach-section">
+    <div class="section-eyebrow">AI Coach</div>
+
+    <div class="quick-asks">
+      <div class="quick-ask" onclick="sendQuick('Can I have a beer now?')">Can I have a beer?</div>
+      <div class="quick-ask" onclick="sendQuick('How am I doing this week?')">This week?</div>
+      <div class="quick-ask" onclick="sendQuick('I\'m feeling the urge to drink. Help.')">Urge to drink</div>
+      <div class="quick-ask" onclick="sendQuick('Give me a verse for today.')">Today\'s verse</div>
+      <div class="quick-ask" onclick="sendQuick('What should I focus on today?')">Today\'s focus</div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask your coach..." rows="1" onkeydown="handleChatKey(event)"></textarea>
+      <button class="chat-send" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- DIVIDER → Quick Log -->
+  <div class="scroll-divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">Quick Log</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- 2. QUICK LOG -->
+  <div class="quick-log-section">
+
+    <!-- Today strip -->
+    <div class="today-strip">
+      <div class="today-stat">
+        <div class="today-stat-num" id="todayDrinks">0</div>
+        <div class="today-stat-label">units</div>
+      </div>
+      <div class="today-stat">
+        <div class="today-stat-num" id="todayValiumMg">0</div>
+        <div class="today-stat-label">mg valium</div>
+      </div>
+      <div class="today-stat">
+        <div class="today-stat-num" id="todayFreeDays">—</div>
+        <div class="today-stat-label">free days</div>
+      </div>
+    </div>
+
+    <!-- Alcohol -->
+    <div class="card-title" style="margin-bottom:10px;">Log a Drink</div>
+    <div class="drink-types" id="drinkTypes">
+      <button class="drink-type-btn selected" data-type="Beer" data-units="1" onclick="selectDrink(this)">
+        <span class="emoji">🍺</span><span>Beer</span>
+      </button>
+      <button class="drink-type-btn" data-type="Wine" data-units="1.5" onclick="selectDrink(this)">
+        <span class="emoji">🍷</span><span>Wine</span>
+      </button>
+      <button class="drink-type-btn" data-type="Spirit" data-units="1" onclick="selectDrink(this)">
+        <span class="emoji">🥃</span><span>Spirit</span>
+      </button>
+      <button class="drink-type-btn" data-type="Cocktail" data-units="2" onclick="selectDrink(this)">
+        <span class="emoji">🍹</span><span>Cocktail</span>
+      </button>
+      <button class="drink-type-btn" data-type="Champagne" data-units="1.5" onclick="selectDrink(this)">
+        <span class="emoji">🥂</span><span>Fizz</span>
+      </button>
+      <button class="drink-type-btn" data-type="Other" data-units="1" onclick="selectDrink(this)">
+        <span class="emoji">🍶</span><span>Other</span>
+      </button>
+    </div>
+
+    <div class="limit-bar-wrap">
+      <div class="limit-bar-label">
+        <span>Alcohol today</span>
+        <span id="alcoLimitLabel">0 / 2 target</span>
+      </div>
+      <div class="limit-bar-bg">
+        <div class="limit-bar-fill" id="alcoLimitFill" style="width:0%;background:var(--sage-deep)"></div>
+      </div>
+    </div>
+    <div id="alcoQuickAlert"></div>
+
+    <button class="btn-log-drink" onclick="logDrink()" style="margin-top:10px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Submit Drink
+    </button>
+
+    <!-- Valium -->
+    <div class="divider-line-h"></div>
+    <div class="card-title" style="margin-bottom:10px;">Log Diazepam</div>
+
+    <div class="limit-bar-wrap">
+      <div class="limit-bar-label">
+        <span>Valium today</span>
+        <span id="valiumLimitLabel">0mg / 30mg cap</span>
+      </div>
+      <div class="limit-bar-bg">
+        <div class="limit-bar-fill" id="valiumLimitFill" style="width:0%;background:var(--sage-deep)"></div>
+      </div>
+    </div>
+    <div id="valiumQuickAlert"></div>
+
+    <button class="btn-log-pill" onclick="logPill()" style="margin-top:10px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Log Tablet (+10mg)
+    </button>
+
+  </div>
+
+  <!-- DIVIDER → Daily View -->
+  <div class="scroll-divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">Daily View</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- 3. DAILY VIEW -->
+  <div class="daily-view-section">
+
+    <div class="verse-card" id="dailyVerse"></div>
+
+    <!-- Check-ins -->
+    <div class="card">
+      <div class="card-title">Daily Check-In · Volatility 1–5</div>
+
+      <div class="checkin-block" id="block-morning">
+        <div class="checkin-time"><span class="dot"></span>Morning · 7–10am</div>
+        <div class="checkin-label">How calm do you feel right now?</div>
+        <div class="vol-scale" id="vol-morning"></div>
+        <div class="vol-labels"><span>Calm</span><span>Volatile</span></div>
+        <button class="btn-primary" onclick="submitCheckin('morning')">Submit</button>
+      </div>
+
+      <div class="checkin-block" id="block-afternoon">
+        <div class="checkin-time"><span class="dot"></span>Afternoon · 2–5pm</div>
+        <div class="checkin-label">The 4pm window — how are you doing?</div>
+        <div class="vol-scale" id="vol-afternoon"></div>
+        <div class="vol-labels"><span>Calm</span><span>Volatile</span></div>
+        <button class="btn-primary" onclick="submitCheckin('afternoon')">Submit</button>
+      </div>
+
+      <div class="checkin-block" id="block-evening">
+        <div class="checkin-time"><span class="dot"></span>Evening · 8–11pm</div>
+        <div class="checkin-label">How did today end?</div>
+        <div class="vol-scale" id="vol-evening"></div>
+        <div class="vol-labels"><span>Calm</span><span>Volatile</span></div>
+        <button class="btn-primary" onclick="submitCheckin('evening')">Submit</button>
+      </div>
+    </div>
+
+    <!-- Phase -->
+    <div class="phase-card">
+      <div class="phase-number">Phase 1 of 4 · Weeks 1–4</div>
+      <div class="phase-name">Stabilise</div>
+      <div class="phase-desc">Diazepam stabilised. Protein started. Alcohol max 2 units/day, 2+ free days/week. First swim sessions. Build the floor.</div>
+      <div class="phase-meta"><span>Week 1</span><span>Target: 79.0 kg</span></div>
+      <div class="phase-progress"><div class="phase-bar" style="width:8%"></div></div>
+    </div>
+
+    <!-- Scorecard -->
+    <div class="card">
+      <div class="card-title">Weekly Scorecard</div>
+      <div id="scorecardRows"></div>
+    </div>
+
+    <!-- Weight -->
+    <div class="card">
+      <div class="card-title">Weight Tracker</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;">
+        <div>
+          <div class="stat-row">
+            <div class="stat-big" id="currentWeight">—</div>
+            <div class="stat-unit">kg</div>
+          </div>
+          <div class="stat-sub">current</div>
+        </div>
+        <div>
+          <div class="stat-row">
+            <div class="stat-big">69</div>
+            <div class="stat-unit">kg</div>
+          </div>
+          <div class="stat-sub">target · 4 months</div>
+        </div>
+      </div>
+      <svg class="trajectory-svg" id="weightSVG" viewBox="0 0 300 80"></svg>
+      <div class="divider-line-h"></div>
+      <div class="weight-input-row">
+        <input class="num-input" type="number" id="weightInput" placeholder="79.4" step="0.1" min="50" max="150">
+        <button class="btn-sm" onclick="logWeight()">Save weight</button>
+      </div>
+    </div>
+
+    <!-- 7-day alcohol chart -->
+    <div class="card">
+      <div class="card-title">Alcohol — Last 7 Days</div>
+      <div class="bar-chart" id="alcoBarChart"></div>
+      <div class="streak-row" id="streakRow"></div>
+    </div>
+
+    <!-- 7-day valium chart -->
+    <div class="card">
+      <div class="card-title">Diazepam — Last 7 Days (mg)</div>
+      <div class="bar-chart" id="valiumBarChart"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN: ALCOHOL
+════════════════════════════════════ -->
+<div class="screen" id="screen-alcohol">
+  <div class="screen-pad">
+    <div style="font-family:'Outfit';font-size:20px;font-weight:500;margin-bottom:4px;">Alcohol Log</div>
+    <div style="font-family:'Inter';font-size:12px;color:var(--petrol-mid);margin-bottom:18px;">Full history and patterns.</div>
+
+    <div class="card">
+      <div class="card-title">Today</div>
+      <div class="stat-row">
+        <div class="stat-big" id="alcoTodayCount">0</div>
+        <div class="stat-unit">units</div>
+      </div>
+      <div class="stat-sub" id="alcoTodaySub" style="margin-top:3px;">No drinks logged today</div>
+      <div id="alcoAlert" style="margin-top:8px;"></div>
+      <div class="log-list" id="alcoTodayList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Last 7 Days</div>
+      <div class="bar-chart" id="alcoBarChart2"></div>
+      <div class="divider-line-h"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+        <div>
+          <div style="font-family:'Outfit';font-size:22px;font-weight:300;" id="weekAvg">0</div>
+          <div style="font-family:'Inter';font-size:10px;color:var(--petrol-mid);">avg/day</div>
+        </div>
+        <div>
+          <div style="font-family:'Outfit';font-size:22px;font-weight:300;color:var(--sage);" id="freeDays">0</div>
+          <div style="font-family:'Inter';font-size:10px;color:var(--petrol-mid);">free days</div>
+        </div>
+        <div>
+          <div style="font-family:'Outfit';font-size:22px;font-weight:300;" id="weekTotal">0</div>
+          <div style="font-family:'Inter';font-size:10px;color:var(--petrol-mid);">week total</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN: VALIUM
+════════════════════════════════════ -->
+<div class="screen" id="screen-valium">
+  <div class="screen-pad">
+    <div style="font-family:'Outfit';font-size:20px;font-weight:500;margin-bottom:4px;">Diazepam Log</div>
+    <div style="font-family:'Inter';font-size:12px;color:var(--petrol-mid);margin-bottom:18px;">10mg per tablet · Cap 30mg.</div>
+
+    <div class="card">
+      <div class="card-title">Today</div>
+      <div class="stat-row">
+        <div class="stat-big" id="valiumTodayMgFull">0</div>
+        <div class="stat-unit">mg</div>
+        <div style="font-family:'Outfit';font-size:15px;color:var(--petrol-mid);margin-left:5px;" id="valiumTodayPills">(0 tablets)</div>
+      </div>
+      <div id="valiumAlertFull" style="margin-top:8px;"></div>
+      <div class="log-list" id="valiumTodayList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Last 7 Days (mg)</div>
+      <div class="bar-chart" id="valiumBarChart2"></div>
+      <div class="divider-line-h"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;">
+        <div>
+          <div style="font-family:'Outfit';font-size:22px;font-weight:300;" id="valiumWeekAvg">0</div>
+          <div style="font-family:'Inter';font-size:10px;color:var(--petrol-mid);">avg mg/day</div>
+        </div>
+        <div>
+          <div style="font-family:'Outfit';font-size:22px;font-weight:300;color:var(--straw);" id="valiumWeekPeak">0</div>
+          <div style="font-family:'Inter';font-size:10px;color:var(--petrol-mid);">peak day</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS: 4 tabs, no Coach -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('home', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+    <span class="tab-label">Home</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('alcohol', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 22H16M12 11V22M5 2H19L16 11H8L5 2Z"/></svg>
+    <span class="tab-label">Alcohol</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('valium', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+    <span class="tab-label">Valium</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('scorecard', this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+    <span class="tab-label">Scorecard</span>
+  </button>
+</div>
+
+<!-- Scorecard screen (tab) -->
+<div class="screen" id="screen-scorecard">
+  <div class="screen-pad">
+    <div style="font-family:'Outfit';font-size:20px;font-weight:500;margin-bottom:18px;">Scorecard</div>
+    <div class="phase-card" style="margin-bottom:14px;">
+      <div class="phase-number">Phase 1 of 4 · Weeks 1–4</div>
+      <div class="phase-name">Stabilise</div>
+      <div class="phase-desc">Diazepam stabilised. Protein started. Alcohol max 2 units/day, 2+ free days/week. First swim sessions.</div>
+      <div class="phase-meta"><span>Week 1</span><span>Target: 79.0 kg</span></div>
+      <div class="phase-progress"><div class="phase-bar" style="width:8%"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">This Week</div>
+      <div id="scorecardRowsFull"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DAY_KEYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function dateKey(daysAgo) {
+  const d = new Date(); d.setDate(d.getDate() - daysAgo);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function dayLabel(daysAgo) {
+  if (daysAgo === 0) return 'Today';
+  if (daysAgo === 1) return 'Yest';
+  const d = new Date(); d.setDate(d.getDate() - daysAgo);
+  return DAY_KEYS[d.getDay()];
+}
+
+async function storageGet(key) {
+  try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
+  catch { return null; }
+}
+
+async function storageSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+
+let selectedDrinkType = 'Beer';
+let selectedDrinkUnits = 1;
+let chatHistory = [];
+
+// ── VERSES ──
+const verses = [
+  { text: "And I will restore to you the years that the locust hath eaten.", ref: "Joel 2:25" },
+  { text: "Know ye not that your body is the temple of the Holy Ghost which is in you?", ref: "1 Corinthians 6:19" },
+  { text: "He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake.", ref: "Psalm 23:3" },
+  { text: "I can do all things through Christ which strengtheneth me.", ref: "Philippians 4:13" },
+  { text: "Be not drunk with wine, wherein is excess; but be filled with the Spirit.", ref: "Ephesians 5:18" },
+  { text: "Before I formed thee in the belly I knew thee.", ref: "Jeremiah 1:5" },
+  { text: "The LORD is my strength and my shield; my heart trusted in him, and I am helped.", ref: "Psalm 28:7" },
+  { text: "Come unto me, all ye that labour and are heavy laden, and I will give you rest.", ref: "Matthew 11:28" },
+  { text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles.", ref: "Isaiah 40:31" },
+  { text: "Wine is a mocker, strong drink is raging: and whosoever is deceived thereby is not wise.", ref: "Proverbs 20:1" },
+  { text: "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.", ref: "2 Timothy 1:7" },
+  { text: "Create in me a clean heart, O God; and renew a right spirit within me.", ref: "Psalm 51:10" },
+  { text: "Weeping may endure for a night, but joy cometh in the morning.", ref: "Psalm 30:5" },
+  { text: "The LORD thy God in the midst of thee is mighty; he will save, he will rejoice over thee with joy.", ref: "Zephaniah 3:17" },
+  { text: "Who is among you that feareth the LORD? Let him trust in the name of the LORD, and stay upon his God.", ref: "Isaiah 50:10" },
+  { text: "I will praise thee; for I am fearfully and wonderfully made.", ref: "Psalm 139:14" },
+  { text: "For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil.", ref: "Jeremiah 29:11" },
+  { text: "The spirit of a man will sustain his infirmity; but a wounded spirit who can bear?", ref: "Proverbs 18:14" },
+  { text: "Blessed is the man that endureth temptation: for when he is tried, he shall receive the crown of life.", ref: "James 1:12" },
+  { text: "Let us not be weary in well doing: for in due season we shall reap, if we faint not.", ref: "Galatians 6:9" },
+  { text: "Be strong and courageous. Do not be afraid; do not be discouraged, for the LORD your God will be with you.", ref: "Joshua 1:9" },
+];
+
+async function init() {
+  updateHeader();
+  renderDailyVerse();
+  buildVolScales();
+  await loadCheckins();
+  await refreshAll();
+  addWelcomeMessage();
+}
+
+function updateHeader() {
+  const d = new Date();
+  document.getElementById('headerDate').textContent =
+    `${DAY_KEYS[d.getDay()]} ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+}
+
+function renderDailyVerse() {
+  const d = new Date();
+  const idx = (d.getDate() * 3 + d.getMonth() * 7) % verses.length;
+  const v = verses[idx];
+  document.getElementById('dailyVerse').innerHTML =
+    `<div class="verse-text">"${v.text}"</div><div class="verse-ref">${v.ref}</div>`;
+}
+
+function buildVolScales() {
+  ['morning','afternoon','evening'].forEach(p => {
+    const wrap = document.getElementById(`vol-${p}`);
+    wrap.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'vol-btn'; btn.textContent = i;
+      btn.onclick = () => {
+        wrap.querySelectorAll('.vol-btn').forEach(b => { b.className='vol-btn'; delete b.dataset.selected; });
+        btn.className = `vol-btn selected-${i}`;
+        btn.dataset.selected = i;
+      };
+      wrap.appendChild(btn);
+    }
+  });
+}
+
+async function loadCheckins() {
+  const data = await storageGet(`checkins-${todayKey()}`);
+  if (!data) return;
+  ['morning','afternoon','evening'].forEach(p => { if (data[p]) markCheckinDone(p, data[p]); });
+}
+
+async function submitCheckin(period) {
+  const wrap = document.getElementById(`vol-${period}`);
+  const sel = wrap.querySelector('[data-selected]');
+  if (!sel) { showToast('Select a score first'); return; }
+  const score = parseInt(sel.dataset.selected);
+  const key = `checkins-${todayKey()}`;
+  const existing = await storageGet(key) || {};
+  existing[period] = { score, time: new Date().toISOString() };
+  await storageSet(key, existing);
+  markCheckinDone(period, existing[period]);
+  showToast(`${period.charAt(0).toUpperCase()+period.slice(1)} check-in saved ✓`);
+}
+
+function markCheckinDone(period, data) {
+  const block = document.getElementById(`block-${period}`);
+  block.classList.add('completed');
+  const labels = { 1:'Calm', 2:'Fairly calm', 3:'Moderate', 4:'Volatile', 5:'Very volatile' };
+  ['vol-scale','vol-labels'].forEach(c => { const el = block.querySelector('.'+c); if(el) el.style.display='none'; });
+  const btn = block.querySelector('.btn-primary'); if(btn) btn.style.display='none';
+  block.querySelector('.checkin-label').innerHTML =
+    `<span style="color:var(--sage-deep);font-size:13px;">✓ ${labels[data.score]} (${data.score}/5)</span>`;
+}
+
+// ── DRINK / PILL ──
+function selectDrink(btn) {
+  document.querySelectorAll('.drink-type-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedDrinkType = btn.dataset.type;
+  selectedDrinkUnits = parseFloat(btn.dataset.units);
+}
+
+async function logDrink() {
+  const key = `alcohol-${todayKey()}`;
+  const data = await storageGet(key) || [];
+  data.push({ type: selectedDrinkType, units: selectedDrinkUnits, time: new Date().toISOString() });
+  await storageSet(key, data);
+  await refreshAll();
+  showToast(`${selectedDrinkType} logged`);
+}
+
+async function logPill() {
+  const key = `valium-${todayKey()}`;
+  const data = await storageGet(key) || [];
+  data.push({ mg: 10, time: new Date().toISOString() });
+  await storageSet(key, data);
+  await refreshAll();
+  showToast('10mg Valium logged');
+}
+
+// ── REFRESH ALL ──
+async function refreshAll() {
+  await updateAlcohol();
+  await updateValium();
+  renderScorecard();
+  await renderWeightChart();
+  await updateFreeDaysStat();
+}
+
+async function updateFreeDaysStat() {
+  const days7 = [];
+  for (let i = 0; i < 7; i++) {
+    const d = await storageGet(`alcohol-${dateKey(i)}`) || [];
+    days7.push(d.reduce((a,b)=>a+b.units,0));
+  }
+  const free = days7.filter(u=>u===0).length;
+  const el = document.getElementById('todayFreeDays');
+  el.textContent = free;
+  el.style.color = free >= 2 ? 'var(--sage)' : free === 1 ? '#d4881a' : 'var(--blush)';
+}
+
+async function updateAlcohol() {
+  const today = await storageGet(`alcohol-${todayKey()}`) || [];
+  const todayUnits = today.reduce((a,b)=>a+b.units,0);
+
+  // Home strip
+  document.getElementById('todayDrinks').textContent = todayUnits.toFixed(1).replace('.0','');
+
+  // Limit bars (home)
+  const pct = Math.min((todayUnits/4)*100,100);
+  const col = todayUnits===0 ? 'var(--sage-deep)' : todayUnits<=2 ? 'var(--petrol-mid)' : todayUnits<=4 ? '#d4881a' : 'var(--blush-deep)';
+  document.getElementById('alcoLimitFill').style.width = pct+'%';
+  document.getElementById('alcoLimitFill').style.background = col;
+  document.getElementById('alcoLimitLabel').textContent = `${todayUnits.toFixed(1).replace('.0','')} / 2 target`;
+
+  // Quick alert (home)
+  const qa = document.getElementById('alcoQuickAlert');
+  if (todayUnits===0) qa.innerHTML = `<div class="alert-box alert-green">Alcohol-free so far today.</div>`;
+  else if (todayUnits>4) qa.innerHTML = `<div class="alert-box alert-red">Significantly over limit. Your HRV will show this tomorrow.</div>`;
+  else if (todayUnits>2) qa.innerHTML = `<div class="alert-box alert-amber">Over target. Consider stopping.</div>`;
+  else qa.innerHTML = '';
+
+  // Alcohol tab
+  document.getElementById('alcoTodayCount').textContent = todayUnits.toFixed(1).replace('.0','');
+  document.getElementById('alcoTodaySub').textContent = today.length===0 ? 'No drinks logged today' : `${today.length} drink${today.length>1?'s':''} logged`;
+  const alcoAlert = document.getElementById('alcoAlert');
+  if (todayUnits===0) alcoAlert.innerHTML = `<div class="alert-box alert-green">Alcohol-free so far.</div>`;
+  else if (todayUnits>4) alcoAlert.innerHTML = `<div class="alert-box alert-red">Significantly over limit.</div>`;
+  else if (todayUnits>2) alcoAlert.innerHTML = `<div class="alert-box alert-amber">Over 2-unit target.</div>`;
+  else alcoAlert.innerHTML = '';
+
+  document.getElementById('alcoTodayList').innerHTML = today.map(d => {
+    const t = new Date(d.time);
+    const ts = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+    return `<div class="log-item"><span>${d.type}</span><span class="log-time">${ts} · ${d.units}u</span></div>`;
+  }).join('');
+
+  // 7-day data
+  const days7 = [];
+  for (let i=6;i>=0;i--) {
+    const d = await storageGet(`alcohol-${dateKey(i)}`) || [];
+    days7.push({ label:dayLabel(i), units:d.reduce((a,b)=>a+b.units,0), daysAgo:i });
+  }
+
+  const maxU = Math.max(...days7.map(d=>d.units),1);
+  const makeBarHTML = (days, id) => {
+    document.getElementById(id).innerHTML = days.map(d => {
+      const h = (d.units/maxU)*100;
+      const c = d.units===0?'var(--sage-deep)':d.units<=2?'var(--petrol-mid)':d.units<=4?'#d4881a':'var(--blush-deep)';
+      return `<div class="bar-wrap">
+        <div class="bar-val">${d.units>0?d.units.toFixed(1).replace('.0',''):''}</div>
+        <div class="bar" style="height:${Math.max(h,3)}%;background:${c}"></div>
+        <div class="bar-day">${d.label}</div>
+      </div>`;
+    }).join('');
+  };
+  makeBarHTML(days7, 'alcoBarChart');
+  makeBarHTML(days7, 'alcoBarChart2');
+
+  const wkTotal = days7.reduce((a,b)=>a+b.units,0);
+  const freeDays = days7.filter(d=>d.units===0).length;
+  document.getElementById('weekTotal').textContent = wkTotal.toFixed(1).replace('.0','');
+  document.getElementById('weekAvg').textContent = (wkTotal/7).toFixed(1);
+  document.getElementById('freeDays').textContent = freeDays;
+  document.getElementById('freeDays').style.color = freeDays>=2?'var(--sage)':freeDays===1?'#d4881a':'var(--blush)';
+
+  // Streak
+  document.getElementById('streakRow').innerHTML = days7.map(d => {
+    const cls = d.daysAgo===0?'today':d.units===0?'free':'drink';
+    const icon = d.units===0?'✓':d.units<=2?'~':'✗';
+    return `<div class="streak-day ${cls}"><div>${icon}</div><div class="streak-day-label">${d.label}</div></div>`;
+  }).join('');
+}
+
+async function updateValium() {
+  const today = await storageGet(`valium-${todayKey()}`) || [];
+  const todayMg = today.reduce((a,b)=>a+b.mg,0);
+  const pills = today.length;
+
+  // Home
+  document.getElementById('todayValiumMg').textContent = todayMg;
+
+  const vpct = Math.min((todayMg/30)*100,100);
+  const vcol = todayMg<=20?'var(--sage-deep)':todayMg<=30?'#d4881a':'var(--blush-deep)';
+  document.getElementById('valiumLimitFill').style.width = vpct+'%';
+  document.getElementById('valiumLimitFill').style.background = vcol;
+  document.getElementById('valiumLimitLabel').textContent = `${todayMg}mg / 30mg cap`;
+
+  const vqa = document.getElementById('valiumQuickAlert');
+  if (todayMg>=30) vqa.innerHTML = `<div class="alert-box alert-amber">At daily cap (30mg). Do not take more today.</div>`;
+  else if (todayMg>=30) vqa.innerHTML = `<div class="alert-box alert-amber">At target dose (30mg).</div>`;
+  else vqa.innerHTML = '';
+
+  // Valium tab
+  document.getElementById('valiumTodayMgFull').textContent = todayMg;
+  document.getElementById('valiumTodayPills').textContent = `(${pills} tablet${pills!==1?'s':''})`;
+  const valertFull = document.getElementById('valiumAlertFull');
+  if (todayMg>=30) valertFull.innerHTML = `<div class="alert-box alert-amber">At daily cap (30mg). Do not take more.</div>`;
+  else if (todayMg>=20) valertFull.innerHTML = `<div class="alert-box alert-amber">Getting close to cap. Consider stopping here.</div>`;
+  else valertFull.innerHTML = '';
+
+  document.getElementById('valiumTodayList').innerHTML = today.map(d => {
+    const t = new Date(d.time);
+    const ts = `${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}`;
+    return `<div class="log-item"><span>10mg tablet</span><span class="log-time">${ts}</span></div>`;
+  }).join('');
+
+  const days7 = [];
+  for (let i=6;i>=0;i--) {
+    const d = await storageGet(`valium-${dateKey(i)}`) || [];
+    days7.push({ label:dayLabel(i), mg:d.reduce((a,b)=>a+b.mg,0) });
+  }
+  const maxMg = Math.max(...days7.map(d=>d.mg),30);
+  const valChartHTML = days7.map(d => {
+    const h = (d.mg/maxMg)*100;
+    const c = d.mg<=30?'var(--sage-deep)':d.mg<=40?'#d4881a':'var(--blush-deep)';
+    return `<div class="bar-wrap">
+      <div class="bar-val">${d.mg>0?d.mg:''}</div>
+      <div class="bar" style="height:${Math.max(h,3)}%;background:${c}"></div>
+      <div class="bar-day">${d.label}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('valiumBarChart').innerHTML = valChartHTML;
+  document.getElementById('valiumBarChart2').innerHTML = valChartHTML;
+
+  const wkAvgMg = days7.reduce((a,b)=>a+b.mg,0)/7;
+  const peakMg = Math.max(...days7.map(d=>d.mg));
+  document.getElementById('valiumWeekAvg').textContent = Math.round(wkAvgMg);
+  document.getElementById('valiumWeekPeak').textContent = peakMg;
+}
+
+async function renderScorecard() {
+  const days7 = [];
+  for (let i=0;i<7;i++) {
+    const d = await storageGet(`alcohol-${dateKey(i)}`) || [];
+    days7.push(d.reduce((a,b)=>a+b.units,0));
+  }
+  const wkTotal = days7.reduce((a,b)=>a+b,0);
+  const freeDays = days7.filter(d=>d===0).length;
+  const maxDay = Math.max(...days7);
+  const pills = await storageGet(`valium-${todayKey()}`) || [];
+  const todayMg = pills.reduce((a,b)=>a+b.mg,0);
+  const weight = await storageGet('weight-log') || [];
+  const latestW = weight.length>0 ? weight[weight.length-1].kg : null;
+  const checkins = await storageGet(`checkins-${todayKey()}`) || {};
+
+  const rows = [
+    { label:'Alcohol-free days', sub:`${freeDays}/7 · target 2+`, val:`${freeDays}`, tl:freeDays>=2?'green':freeDays===1?'amber':'red' },
+    { label:'Week alcohol total', sub:'target < 14u', val:`${wkTotal.toFixed(1)}u`, tl:wkTotal<=14?'green':wkTotal<=20?'amber':'red' },
+    { label:'Peak day', sub:'target < 4u', val:`${maxDay.toFixed(1)}u`, tl:maxDay<=2?'green':maxDay<=4?'amber':'red' },
+    { label:'Diazepam today', sub:'cap 30mg', val:`${todayMg}mg`, tl:todayMg<=20?'green':todayMg<=30?'amber':'red' },
+    { label:'Check-ins today', sub:'3 per day', val:`${Object.keys(checkins).length}/3`, tl:Object.keys(checkins).length===3?'green':Object.keys(checkins).length>=1?'amber':'grey' },
+    { label:'Current weight', sub:'target 79.0kg this week', val:latestW?`${latestW}kg`:'Not logged', tl:latestW&&latestW<=79.5?'green':latestW&&latestW<=80.5?'amber':'grey' },
+  ];
+
+  const html = rows.map(r => `
+    <div class="score-row">
+      <div><div class="score-label">${r.label}</div><div class="score-meta">${r.sub}</div></div>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="font-family:'Outfit';font-size:14px;">${r.val}</div>
+        <div class="traffic-light tl-${r.tl}"></div>
+      </div>
+    </div>`).join('');
+
+  const sc1 = document.getElementById('scorecardRows');
+  const sc2 = document.getElementById('scorecardRowsFull');
+  if (sc1) sc1.innerHTML = html;
+  if (sc2) sc2.innerHTML = html;
+}
+
+async function renderWeightChart() {
+  const data = await storageGet('weight-log') || [];
+  const currentW = data.length>0 ? data[data.length-1].kg : null;
+  document.getElementById('currentWeight').textContent = currentW ? currentW.toFixed(1) : '—';
+
+  const svg = document.getElementById('weightSVG');
+  if (data.length < 2) {
+    const s=79.4, t=69, w=16;
+    const pts = Array.from({length:w+1},(_,i)=>{
+      const kg = s-((s-t)/w)*i;
+      return `${(i/w)*280+10},${76-((s-kg)/(s-t+2))*66}`;
+    });
+    svg.innerHTML = `
+      <polyline points="${pts.join(' ')}" fill="none" stroke="rgba(139,191,201,0.25)" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="8" y="78" font-family="Inter" font-size="8" fill="#6B8C96">79.4</text>
+      <text x="275" y="78" font-family="Inter" font-size="8" fill="#286B46">69</text>`;
+    return;
+  }
+  const minKg = Math.min(...data.map(d=>d.kg),69)-1;
+  const maxKg = Math.max(...data.map(d=>d.kg))+1;
+  const pts = data.map((d,i)=>{
+    const x=(i/Math.max(data.length-1,1))*280+10;
+    const y=76-((d.kg-minKg)/(maxKg-minKg))*66;
+    return `${x},${y}`;
+  });
+  const targetY = 76-((69-minKg)/(maxKg-minKg))*66;
+  svg.innerHTML = `
+    <line x1="10" y1="${targetY}" x2="290" y2="${targetY}" stroke="rgba(40,107,70,0.3)" stroke-width="1" stroke-dasharray="3,3"/>
+    <polyline points="${pts.join(' ')}" fill="none" stroke="var(--petrol-mid)" stroke-width="2" stroke-linejoin="round"/>
+    ${data.map((d,i)=>{const x=(i/Math.max(data.length-1,1))*280+10;const y=76-((d.kg-minKg)/(maxKg-minKg))*66;return `<circle cx="${x}" cy="${y}" r="3" fill="var(--petrol-mid)"/>`;}).join('')}
+    <text x="272" y="${Math.max(targetY-3,10)}" font-family="Inter" font-size="8" fill="#286B46">69kg</text>`;
+}
+
+async function logWeight() {
+  const val = parseFloat(document.getElementById('weightInput').value);
+  if (!val||val<40||val>200) { showToast('Enter a valid weight'); return; }
+  const data = await storageGet('weight-log') || [];
+  data.push({ kg:val, date:todayKey() });
+  await storageSet('weight-log', data);
+  document.getElementById('weightInput').value = '';
+  await renderWeightChart();
+  renderScorecard();
+  showToast(`${val} kg saved`);
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`screen-${name}`).classList.add('active');
+  btn.classList.add('active');
+  if (name==='scorecard') renderScorecard();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ── COACH ──
+const verses2 = verses;
+
+function addWelcomeMessage() {
+  const h = new Date().getHours();
+  const g = h<12?'morning':h<17?'afternoon':'evening';
+  addCoachMessage(`Good ${g}, Joao. Ask me anything — "can I have a drink?", how you're doing this week, or what to focus on right now. I know your logs.\n\n*"He restoreth my soul."* — Psalm 23:3`);
+}
+
+function addCoachMessage(text) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg coach';
+  div.innerHTML = `<div class="msg-bubble">${text.replace(/\n/g,'<br>').replace(/\*(.*?)\*/g,'<em>$1</em>')}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg coach'; div.id = 'typingIndicator';
+  div.innerHTML = `<div class="coach-typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() { const t=document.getElementById('typingIndicator'); if(t) t.remove(); }
+
+function sendQuick(text) { document.getElementById('chatInput').value=text; sendMessage(); }
+function handleChatKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
+
+async function buildCoachContext() {
+  const now = new Date();
+  const dayOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
+  const drinks = await storageGet(`alcohol-${todayKey()}`) || [];
+  const todayUnits = drinks.reduce((a,b)=>a+b.units,0);
+  const days7 = [];
+  for (let i=0;i<7;i++) {
+    const d = await storageGet(`alcohol-${dateKey(i)}`) || [];
+    days7.push({ daysAgo:i, units:d.reduce((a,b)=>a+b.units,0) });
+  }
+  const wkTotal = days7.reduce((a,b)=>a+b.units,0);
+  const freeDays = days7.filter(d=>d.units===0).length;
+  const pills = await storageGet(`valium-${todayKey()}`) || [];
+  const todayMg = pills.reduce((a,b)=>a+b.mg,0);
+  const checkins = await storageGet(`checkins-${todayKey()}`) || {};
+  const weight = await storageGet('weight-log') || [];
+  const latestW = weight.length>0?weight[weight.length-1].kg:79.4;
+
+  return `You are the AI health coach for Joao Victor (33, London, Brazilian, Christian).
+
+REAL-TIME CONTEXT:
+- Time: ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} on ${dayOfWeek} ${now.getDate()} ${MONTH_NAMES[now.getMonth()]}
+- Today's alcohol: ${todayUnits} units across ${drinks.length} drinks
+- Last 7 days alcohol: ${wkTotal.toFixed(1)} total, ${freeDays} alcohol-free days
+- Today's Valium: ${todayMg}mg (${pills.length} tablets)
+- Check-ins done today: ${Object.keys(checkins).length}/3
+- Current weight: ${latestW}kg (target: 69kg)
+- Phase: 1 — Stabilise (Weeks 1–4)
+
+JOAO'S FULL PROFILE:
+- PTSD from abusive marriage (Leticia, 2019–2025). Active psychiatric treatment (Dr. Alain Perrier) + therapy (next: April 8).
+- AUDIT score 29/40 — high-risk use. Trigger: 4pm loneliness after class.
+- Goal: 2–3 alcohol-free days/week, max 2 units on drinking days. Reduce over 4 months.
+- Medications: Duloxetine 120mg, Pregabalin 100mg (tapering), Diazepam max 30mg/day (tapering), Quetiapine 50mg.
+- Pre-2019 identity: athletic, pianist/composer, social, cook, traveler — did not drink.
+- Christian faith is a core pillar. Use KJV scripture naturally, never forced.
+- Perfectionism collapse risk: one bad day is not total failure.
+- Stress–spine–alcohol loop: stress → neck pain → alcohol to numb → worse HRV → more stress.
+- MRI results pending (26 March). Cervical radiculopathy, right arm tingling.
+
+COACHING RULES:
+- Be direct, never shame. Data first, verdict clear.
+- Tone adapts: compassionate when struggling, firm when needed, celebratory when earned.
+- For "can I have a drink?" — assess time, today's units, week pattern, day, and give a CLEAR answer with reasoning.
+- Never advise on medication doses — doctors only.
+- Relapse-tolerant: a slip is data, not a verdict.
+- 4pm is the danger window. Watch it.
+- Keep responses concise (3–6 sentences). Use line breaks. Use scripture when it genuinely fits.`;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addUserMessage(text);
+  showTyping();
+  chatHistory.push({ role:'user', content:text });
+  const system = await buildCoachContext();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system,
+        messages:chatHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Something went wrong. Try again.';
+    chatHistory.push({ role:'assistant', content:reply });
+    if (chatHistory.length>20) chatHistory=chatHistory.slice(-20);
+    removeTyping();
+    addCoachMessage(reply);
+  } catch {
+    removeTyping();
+    addCoachMessage('Connection issue. Check your network and try again.');
+  }
+}
+
+init();
+</script>
+</body>
+</html>
